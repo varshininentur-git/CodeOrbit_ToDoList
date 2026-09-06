@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>To-Do List</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="todo-card">
+    <header>
+      <p class="eyebrow">STAY ON TRACK</p>
+      <h1>TO-DO LIST</h1>
+      <p class="subtitle">Organize your tasks and stay productive.</p>
+    </header>
+
+    <form class="task-form" action="{{ url_for('add') }}" method="post">
+      <label class="sr-only" for="task">Enter a new task</label>
+      <input id="task" name="task" type="text" placeholder="Enter a new task..." autocomplete="off">
+      <button type="submit">Add Task</button>
+    </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <section aria-live="polite" class="messages">
+          {% for category, message in messages %}
+            <p class="message {{ category }}">{{ message }}</p>
+          {% endfor %}
+        </section>
+      {% endif %}
+    {% endwith %}
+
+    <section class="tasks" aria-labelledby="tasks-heading">
+      <div class="section-heading">
+        <h2 id="tasks-heading">Your Tasks</h2>
+        <span>{{ tasks|length }} total</span>
+      </div>
+
+      {% if tasks %}
+        <ol>
+          {% for task in tasks %}
+            <li>
+              <span class="task-name">{{ task }}</span>
+              <form action="{{ url_for('remove', task_index=loop.index0) }}" method="post">
+                <button class="remove-button" type="submit">Remove</button>
+              </form>
+            </li>
+          {% endfor %}
+        </ol>
+      {% else %}
+        <div class="empty-state">
+          <p>No tasks available.</p>
+          <span>Add your first task above!</span>
+        </div>
+      {% endif %}
+    </section>
+  </main>
+</body>
+</html>
